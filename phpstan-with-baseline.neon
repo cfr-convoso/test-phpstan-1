@@ -1,5 +1,5 @@
 includes:
   - volume/baseline.neon
 
-includes:
-  - phpstan.neon
+parameters:
+  level: 1
