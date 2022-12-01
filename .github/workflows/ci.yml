@@ -24,14 +24,8 @@ jobs:
       - name: Re-generate PHPStan baseline
         uses: php-actions/phpstan@v3
         with:
-          generate_baseline: volume/baseline.neon
           path: src/
           configuration: phpstan-no-baseline.neon
-      - name: Persist baseline
-        uses: actions/upload-artifact@master
-        with:
-          name: persisted
-          path: volume
         
 
   phpstan-run:
