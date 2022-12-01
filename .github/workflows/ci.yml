@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  phpstan-run:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,5 +15,5 @@ jobs:
       - name: Run PHPStan
         uses: php-actions/phpstan@v3
         with:
-          generate_baseline: baseline.db
+          generate_baseline: baseline.neon
           path: src/
