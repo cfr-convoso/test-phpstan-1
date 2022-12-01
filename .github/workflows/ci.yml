@@ -27,7 +27,7 @@ jobs:
           generate_baseline: volume/baseline.neon
           path: src/
           configuration: phpstan-no-baseline.neon
-      - name: Persist baseline
+      - name: Sync baseline
         uses: jakejarvis/s3-sync-action@master
         with:
           args: --follow-symlinks
@@ -53,6 +53,17 @@ jobs:
         with:
           name: persisted
           path: volume
+      - name: Sync baseline
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --follow-symlinks
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SOURCE_DIR: './volume'
+          DEST_DIR: '/volume'
       - name: Run PHPStan
         uses: php-actions/phpstan@v3
         with:
