@@ -1,0 +1,17 @@
+{
+    "name": "chris/test-phpstan-1",
+    "description": "test",
+    "license": "BSD",
+    "autoload": {
+        "psr-4": {
+            "Chris\\TestPhpstan1\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Chris F Ravenscroft",
+            "email": "chris@voilaweb.com"
+        }
+    ],
+    "require": {}
+}

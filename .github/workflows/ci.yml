@@ -1,14 +1,66 @@
 name: CI
 
-on: [push]
+on:
+  pull_request:
 
 jobs:
-  build-test:
-    runs-on: ubuntu-latest
 
+  #debug-it:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - name: Value of commit message
+  #      run: |
+  #        echo '${{toJSON(github.event)}}'
+
+  phpstan-baseline:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.pull_request.body, '[generate-baseline]')"
     steps:
-    - uses: actions/checkout@v3
-    - uses: php-actions/composer@v6 # or alternative dependency management
-    - uses: php-actions/phpstan@v3
-      with:
-        path: src/
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Composer dependencies if any
+        uses: php-actions/composer@v6
+      - run: mkdir -p volume
+      - name: Re-generate PHPStan baseline
+        uses: php-actions/phpstan@v3
+        with:
+          generate_baseline: volume/baseline.neon
+          path: src/
+          configuration: phpstan-no-baseline.neon
+      - name: Save baseline
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --follow-symlinks
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SOURCE_DIR: './volume'
+          DEST_DIR: '/volume'
+        
+
+  phpstan-run:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.pull_request.body, '[generate-baseline]')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Composer dependencies if any
+        uses: php-actions/composer@v6
+      - run: mkdir -p volume
+      - name: Load baseline
+        uses: keithweaver/aws-s3-github-action@v1.0.0
+        with:
+          command: cp
+          source: s3://${{ secrets.AWS_S3_BUCKET }}//volume/baseline.neon
+          destination: ./volume/
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+      - run: ls -lR
+      - name: Run PHPStan
+        uses: php-actions/phpstan@v3
+        with:
+          path: src/
+          configuration: phpstan-with-baseline.neon
