@@ -35,6 +35,8 @@ jobs:
         run: git add baseline.neon
       - name: commit changed files
         run: git commit -m "Git Workflow persist baseline.neon"
+      - name: push changed files
+        run: git push
 
   phpstan-run:
     runs-on: ubuntu-latest
