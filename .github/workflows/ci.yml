@@ -5,7 +5,7 @@ on:
 
 jobs:
 
-  debug:
+  debug-it:
     runs-on: ubuntu-latest
     steps:
       - name: Value of commit message
