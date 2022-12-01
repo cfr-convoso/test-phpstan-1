@@ -5,16 +5,16 @@ on:
 
 jobs:
 
-  debug-it:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Value of commit message
-        run: |
-          echo '${{toJSON(github.event)}}'
+  #debug-it:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - name: Value of commit message
+  #      run: |
+  #        echo '${{toJSON(github.event)}}'
 
   phpstan-baseline:
     runs-on: ubuntu-latest
-    if: "contains(github.event.head_commit.message, '[generate-baseline]')"
+    if: "contains(github.event.pull_request.body, '[generate-baseline]')"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -34,7 +34,7 @@ jobs:
 
   phpstan-run:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[generate-baseline]')"
+    if: "!contains(github.event.pull_request.body, '[generate-baseline]')"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
