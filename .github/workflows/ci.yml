@@ -15,5 +15,5 @@ jobs:
       - name: Run PHPStan
         uses: php-actions/phpstan@v3
         with:
-          generate_baseline: baseline/
+          generate_baseline: baseline.db
           path: src/
