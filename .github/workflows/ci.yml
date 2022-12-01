@@ -4,16 +4,35 @@ on:
   pull_request:
 
 jobs:
-  phpstan-run:
+  phpstan-baseline:
     runs-on: ubuntu-latest
-
+    if: "contains(github.event.head_commit.message, '[generate-baseline]')"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Composer dependencies if any
-        uses: php-actions/composer@v6 # or alternative dependency management
-      - name: Run PHPStan
+        uses: php-actions/composer@v6
+      - name: Re-generate PHPStan baseline, if requested
         uses: php-actions/phpstan@v3
         with:
           generate_baseline: baseline.neon
           path: src/
+      - name: check for changes
+        run: git status
+      - name: stage changed files
+        run: git add baseline.neon
+      - name: commit changed files
+        run: git commit -m "Git Workflow: persist baseline.neon"
+  phpstan-run:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[generate-baseline]')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Composer dependencies if any
+        uses: php-actions/composer@v6
+      - name: Run PHPStan, unless we generated a new baseline
+        uses: php-actions/phpstan@v3
+        with:
+          path: src/
+          args:
