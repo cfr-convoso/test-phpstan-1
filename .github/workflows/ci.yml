@@ -25,6 +25,10 @@ jobs:
         with:
           generate_baseline: baseline.neon
           path: src/
+      - name: whoami1
+        run: git config --global user.email "cravenscroft@convoso.com"
+      - name: whoami2
+        run: git config --global user.name "Chris F Ravenscroft"
       - name: check for changes
         run: git status
       - name: stage changed files
