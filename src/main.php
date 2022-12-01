@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-// version 0.0.6
+// version 0.0.7
 class HelloWorld
 {
 	public function sayHello(DateTimeImutable $date): void
