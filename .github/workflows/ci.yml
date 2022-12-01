@@ -53,12 +53,11 @@ jobs:
         uses: keithweaver/aws-s3-github-action@v1.0.0
         with:
           command: cp
-          source: s3://${{ secrets.AWS_S3_BUCKET }}/volume/
+          source: s3://${{ secrets.AWS_S3_BUCKET }}/volume/baseline.neon
           destination: ./volume/
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
-          flags: --recursive
       - run: ls -lR
       - name: Run PHPStan
         uses: php-actions/phpstan@v3
