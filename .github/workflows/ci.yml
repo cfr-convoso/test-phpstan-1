@@ -30,7 +30,7 @@ jobs:
       - name: stage changed files
         run: git add baseline.neon
       - name: commit changed files
-        run: git commit -m "Git Workflow: persist baseline.neon"
+        run: git commit -m "Git Workflow persist baseline.neon"
 
   phpstan-run:
     runs-on: ubuntu-latest
