@@ -20,23 +20,19 @@ jobs:
         uses: actions/checkout@v3
       - name: Composer dependencies if any
         uses: php-actions/composer@v6
+      - run: mkdir -p volume
       - name: Re-generate PHPStan baseline
         uses: php-actions/phpstan@v3
         with:
-          generate_baseline: baseline.neon
+          generate_baseline: volume/baseline.neon
           path: src/
-      - name: whoami1
-        run: git config --global user.email "cravenscroft@convoso.com"
-      - name: whoami2
-        run: git config --global user.name "Chris F Ravenscroft"
-      - name: check for changes
-        run: git status
-      - name: stage changed files
-        run: git add baseline.neon
-      - name: commit changed files
-        run: git commit -m "Git Workflow persist baseline.neon"
-      - name: push changed files
-        run: git push
+          configuration: phpstan-no-baseline.neon
+      - name: Persist baseline
+        uses: actions/upload-artifact@master
+        with:
+          name: persisted
+          path: volume
+        
 
   phpstan-run:
     runs-on: ubuntu-latest
@@ -46,8 +42,13 @@ jobs:
         uses: actions/checkout@v3
       - name: Composer dependencies if any
         uses: php-actions/composer@v6
+      - name: Retrieve baseline
+        uses: actions/download-artifact@master
+        with:
+          name: persisted
+          path: volume
       - name: Run PHPStan
         uses: php-actions/phpstan@v3
         with:
           path: src/
-          args:
+          configuration: phpstan.neon
